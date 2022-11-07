@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DSCI 558 Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css"  type="text/css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/form.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Job Search</span>
+        </div>
+    </nav>
+    <form>
+        <div class="mb-3">
+            <input class="form-control" type="text" name="job_title" id="titleInput" placeholder="Software Engineer." required>
+        </div>
+        <button class="btn btn-primary" type="submit" id="btn">Search</button>
+        <button class="btn btn-secondary" type="reset" id="del">Delete</button>
+    </form>
+    <div id="json_container" style="display: none; height: 300px"></div>
+    <div id="errorAlert" style="display: none;"></div>
+    <div id="artist_details"></div>
+    <div id="loading" style="display: none;">
+        <img id="loading-image" src="/static/img/loading.gif" width="60px" height="60px" alt="Loading..." />
+    </div>
+</body>
+</html>
