@@ -23,12 +23,17 @@ $(document).ready(function() {
                     // htmlString += "<a href=\"/" + data[i]['id'] + "\">"
                     // htmlString += "<div class=\"empty_bar\">"
                     // artist_id = data[i]['id']
-                    htmlString += "<a href=\"javascript:display_artist_info(&quot;" + String(data[i]['id']) + "&quot;);\">";
-                    htmlString += "<div class=\"card\" id=\"" + String(data[i]['id']) + "\">";
-                    htmlString += "<div class=\"card-body\">";
+                    htmlString += "<div class=\"card\">";
+                    htmlString += "<div class=\"card-header\">";
+                    htmlString += "<a data-bs-toggle=\"collapse\" data-bs-target=\"#id" + String(i) + "\">";
                     htmlString += "<h5 class=\"card-title\">" + data[i]['job_title'] + "</h5>";
+                    htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['company'] + "</h6>";
+                    htmlString += "</a>";
                     htmlString += "</div>";
-                    htmlString += "</div></a>";
+                    htmlString += "<div id=\"id" + String(i) + "\" class=\"collapse\" data-bs-parent=\"#json_container\">";
+                    htmlString += "<div class=\"card-body\">Company Information<br>Job Descriptions<br>Similar Jobs: </div>"
+                    htmlString += "</div>";
+                    htmlString += "</div>";
                 }
                 // jsonContainer.insertAdjacentHTML('beforeend', htmlString);
                 jsonContainer.innerHTML = htmlString;

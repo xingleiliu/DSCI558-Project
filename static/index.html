@@ -16,12 +16,12 @@
             <span class="navbar-brand mb-0 h1">Job Search</span>
         </div>
     </nav>
-    <form>
-        <div class="mb-3">
-            <input class="form-control" type="text" name="job_title" id="titleInput" placeholder="Software Engineer." required>
+    <form class="form-inline">
+        <div class="form-group m-4">
+            <input class="form-control" type="text" name="job_title" id="titleInput" placeholder="Search by job title" required>
         </div>
-        <button class="btn btn-primary" type="submit" id="btn">Search</button>
-        <button class="btn btn-secondary" type="reset" id="del">Delete</button>
+        <button class="btn btn-primary mb-4" type="submit" id="btn">Search</button>
+        <button class="btn btn-secondary mb-4" type="reset" id="del">Delete</button>
     </form>
     <div id="json_container" style="display: none; height: 300px"></div>
     <div id="errorAlert" style="display: none;"></div>
