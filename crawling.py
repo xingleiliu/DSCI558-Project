@@ -10,6 +10,22 @@
 import cloudscraper
 from bs4 import BeautifulSoup
 import json
+import requests
+from datetime import date
+from datetime import date
+# from scrapeops_python_requests.scrapeops_requests import ScrapeOpsRequests
+#
+# scrapeops_logger = ScrapeOpsRequests(
+#     scrapeops_api_key= '03ffa28b-89a1-4663-8449-954c7e8b04b8',
+#     spider_name='ScrapeOps Test Script',
+#     job_name='TestJob'
+#     )
+#
+#
+# requests = scrapeops_logger.RequestsWrapper()
+
+
+today = date.today().strftime("%m%d")
 
 
 class JobPosting:
@@ -22,14 +38,24 @@ class JobPosting:
 base_url = "https://www.indeed.com"
 scraper = cloudscraper.create_scraper()  # returns a CloudScraper instance
 # Or: scraper = cloudscraper.CloudScraper()  # CloudScraper inherits from requests.Session
-next_page = "/jobs?q=&l=CA&from=searchOnHP&vjk=71128f721ad9751f"
-filename = 'test_output.jsonl'
+next_page = "/jobs?q=&l=CA&sc=0kf%3Aexplvl%28ENTRY_LEVEL%29%3B&fromage=7"
+filename = 'indeed_postings_' + today + '.jsonl'
 outfile = open(filename, 'w')
+num_pages = 0
 
-
-for i in range(2):
-    page = scraper.get(base_url + next_page)
-    print(page.status_code)
+while True:
+    # page = requests.get(base_url + next_page)
+    # page = scraper.get(base_url + next_page)
+    page = requests.get(
+        url='https://proxy.scrapeops.io/v1/',
+        params={
+            'api_key': '03ffa28b-89a1-4663-8449-954c7e8b04b8',
+            'url': base_url + next_page,
+        },
+    )
+    num_pages += 1
+    if page.status_code != 200:
+        print(page.status_code)
     soup = BeautifulSoup(page.content, "html.parser")
     # print(soup.prettify())
     cards = soup.find_all("div", {"class": "job_seen_beacon"})
@@ -46,3 +72,4 @@ for i in range(2):
         break
 
 outfile.close()
+print("Crawled {num_pages} pages".format(num_pages=num_pages))
