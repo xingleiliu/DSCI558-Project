@@ -5,8 +5,9 @@ from datetime import date
 
 
 class JobPosting:
-    def __init__(self, job_title, company, link, job_description, num_candidate, posting_date):
+    def __init__(self, job_title, location, company, link, job_description, num_candidate, posting_date):
         self.job_title = job_title
+        self.location = location
         self.company = company
         self.link = link
         self.job_description = job_description
@@ -16,12 +17,15 @@ class JobPosting:
 
 today = date.today().strftime("%m%d")
 base_url = "https://www.indeed.com"
-filename = 'indeed_postings_details_' + today + '.jsonl'
-outfile = open(filename, 'w')
+input_file = 'indeed_postings_' + today + '.jsonl'
+output_file = 'indeed_postings_details_' + today + '.jsonl'
+outfile = open(output_file, 'w')
 
-with open('indeed_postings_1113.jsonl', 'r') as input_file:
+with open(input_file, 'r') as input_file:
     json_list = list(input_file)
+    num_postings = 0
     for json_str in json_list:
+        num_postings += 1
         job = json.loads(json_str)
         company_name = job['company']
         url = base_url + job['link']
@@ -39,12 +43,13 @@ with open('indeed_postings_1113.jsonl', 'r') as input_file:
             continue
         # JobComponent-description
         job_description = soup.find("div", {"class": "jobsearch-jobDescriptionText"}).text
+        location = soup.find("div", {"class": "jobsearch-JobInfoHeader-subtitle"}).find("div", class_="", recursive=False).text
         posting_date = soup.find("p", {"class": "jobsearch-HiringInsights-entry--bullet"}).text
         try:
             num_candidate = soup.find("p", {"class": "jobsearch-HiringInsights-entry"}).text
-            job_posting = JobPosting(title, company_name, url, job_description, num_candidate, posting_date)
+            job_posting = JobPosting(title, location, company_name, url, job_description, num_candidate, posting_date)
         except AttributeError:
-            job_posting = JobPosting(title, company_name, url, job_description, None, posting_date)
+            job_posting = JobPosting(title, location, company_name, url, job_description, None, posting_date)
         line = json.dumps(job_posting.__dict__) + "\n"
         outfile.write(line)
 
