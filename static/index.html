@@ -16,12 +16,57 @@
             <span class="navbar-brand mb-0 h1">Job Search</span>
         </div>
     </nav>
-    <form class="form-inline">
-        <div class="form-group m-4">
-            <input class="form-control" type="text" name="job_title" id="titleInput" placeholder="Search by job title" required>
+    <form>
+        <div class="row m-4">
+            <div class="col">
+                <input class="form-control" type="text" name="job_title" id="titleInput" placeholder="Search by job title" required>
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Company">
+            </div>
+            <div class="col">
+                <input class="form-control" type="text" name="location" id="location" placeholder="State, City, Zip code" required>
+<!--                <select class="form-select" required>-->
+<!--                  <option value="">Select state</option>-->
+<!--                  <option value="CA">CA</option>-->
+<!--                  <option value="NY">NY</option>-->
+<!--                  <option value="WA">WA</option>-->
+<!--                    <option value="GA">GA</option>-->
+<!--                    <option value="TX">TX</option>-->
+<!--                </select>-->
+            </div>
+<!--        skills, qualifications-->
         </div>
+        <div class="row m-4">
+            <div class="col">
+                <select class="form-select">
+                  <option value="">Date Posted</option>
+                  <option value="0">< 3 days</option>
+                  <option value="1">< 7 days</option>
+                  <option value="2">< 14 days</option>
+                </select>
+            </div>
+            <div class="col">
+                <select class="form-select">
+                  <option value="">Year of Experience</option>
+                  <option value="0">0-1</option>
+                  <option value="1">1-3</option>
+                  <option value="2">>3</option>
+                </select>
+            </div>
+            <div class="col">
+                <select class="form-select">
+                  <option value="">Job Type</option>
+                  <option value="0">Intern</option>
+                  <option value="1">Full Time</option>
+                </select>
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Skill">
+            </div>
+          </div>
         <button class="btn btn-primary mb-4" type="submit" id="btn">Search</button>
-        <button class="btn btn-secondary mb-4" type="reset" id="del">Delete</button>
+        <button class="btn btn-secondary mb-4" type="reset" id="del">Clear</button>
     </form>
     <div id="json_container" style="display: none; height: 300px"></div>
     <div id="errorAlert" style="display: none;"></div>
