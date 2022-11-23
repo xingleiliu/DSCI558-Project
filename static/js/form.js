@@ -26,7 +26,7 @@ $(document).ready(function() {
                     htmlString += "<div class=\"card\">";
                     htmlString += "<div class=\"card-header\">";
                     htmlString += "<a data-bs-toggle=\"collapse\" data-bs-target=\"#id" + String(i) + "\">";
-                    htmlString += "<h5 class=\"card-title\">" + data[i]['job_title'] + "</h5>";
+                    htmlString += "<h5 class=\"card-title\">" + data[i]['title'] + "</h5>";
                     htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['company'] + "</h6>";
                     htmlString += "</a>";
                     htmlString += "</div>";
