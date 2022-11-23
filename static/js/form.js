@@ -5,7 +5,9 @@ $(document).ready(function() {
         $('#loading').show();
         $.ajax({
             data : {
-                job_title: $('#titleInput').val()
+                job_title: $('#titleInput').val(),
+                location: $('#locationInput').val(),
+                company: $('#companyInput').val()
             },
             type: 'GET',
             url : '/process'
@@ -28,6 +30,7 @@ $(document).ready(function() {
                     htmlString += "<a data-bs-toggle=\"collapse\" data-bs-target=\"#id" + String(i) + "\">";
                     htmlString += "<h5 class=\"card-title\">" + data[i]['title'] + "</h5>";
                     htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['company'] + "</h6>";
+                    htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['location'] + "</h6>";
                     htmlString += "</a>";
                     htmlString += "</div>";
                     htmlString += "<div id=\"id" + String(i) + "\" class=\"collapse\" data-bs-parent=\"#json_container\">";

@@ -9,14 +9,19 @@ job_kg = rdflib.Graph()
 job_kg.parse('job_kg.ttl', format="turtle")
 
 
-def get_job_postings(job_title):
+def get_job_postings(job_title, location, company):
     q = ("PREFIX schema: <https://schema.org/>"
-        "SELECT * WHERE {"
+         "SELECT * WHERE {"
          "?job_uri schema:jobLocation ?location;"
          "schema:title ?title;"
          "schema:hiringOrganization ?company."
-         "FILTER regex(?title, \"^Software\")"
+         f"FILTER regex(?title, \"{job_title}\")"
+         f"FILTER regex(?location, \"{location}\")"
+         f"FILTER regex(?company, \"{company}\")"
          "}")
+    # "OPTIONAL {"
+    # f"FILTER regex(?location, \"{location}\")"
+    # "}"
     results = job_kg.query(q)
     output = []
     for row in results:
@@ -27,6 +32,7 @@ def get_job_postings(job_title):
     # for json_str in json_list:
     #     result = json.loads(json_str)
     #     output.append(result)
+    print(output)
     return jsonify(output)
 
 
@@ -39,8 +45,10 @@ def main():
 def process():
     # name = request.form['name']
     job_title = request.args.get('job_title')
+    location = request.args.get('location')
+    company = request.args.get('company')
     if job_title:
-        return get_job_postings(job_title=job_title)
+        return get_job_postings(job_title, location, company)
     return jsonify({'error': 'Missing data!'})
 
 
