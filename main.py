@@ -14,25 +14,27 @@ def get_job_postings(job_title, location, company):
          "SELECT * WHERE {"
          "?job_uri schema:jobLocation ?location;"
          "schema:title ?title;"
-         "schema:hiringOrganization ?company."
+         "schema:hiringOrganization ?company;"
+         "schema:employerOverview ?description."
          f"FILTER regex(?title, \"{job_title}\")"
          f"FILTER regex(?location, \"{location}\")"
          f"FILTER regex(?company, \"{company}\")"
-         "}")
-    # "OPTIONAL {"
-    # f"FILTER regex(?location, \"{location}\")"
-    # "}"
+         "}"
+         )
+
+    # "schema:responsibilities ?responsibilities;"
+    # "schema:qualifications ?qualifications."
+
     results = job_kg.query(q)
     output = []
     for row in results:
-        row_dict = {'uri': row.job_uri, 'title': row.title, 'company': row.company, 'location': row.location}
+        row_dict = {'uri': row.job_uri, 'title': row.title, 'company': row.company, 'location': row.location, 'description': row.description}
         output.append(row_dict)
     # with open('test_output.jsonl', 'r') as json_file:
     #     json_list = list(json_file)
     # for json_str in json_list:
     #     result = json.loads(json_str)
     #     output.append(result)
-    print(output)
     return jsonify(output)
 
 
