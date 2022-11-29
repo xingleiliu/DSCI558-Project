@@ -1,11 +1,13 @@
 $(document).ready(function() {
     $("#multiselect").multiselect({
+    enableFiltering: true,
+    maxHeight: 450,
     templates: {
-      button: '<button type="button" class="multiselect dropdown-toggle btn" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text"></span></button>',
+      button: '<button type="button" class="multiselect dropdown-toggle btn btn-light" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text"></span></button>',
     },
     buttonText: function(options, select) {
                 if (options.length === 0) {
-                    return '    Skills    ';
+                    return '           Skills         ';
                 }
                 else if (options.length > 3) {
                     return 'More than 3 skills selected!';
@@ -56,28 +58,44 @@ $(document).ready(function() {
                     htmlString += "<h5 class=\"card-title\">" + data[i]['title'] + "</h5>";
                     htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['company'] + "</h6>";
                     htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['location'] + "</h6>";
+                    htmlString += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['salary'] + "</h6>";
                     htmlString += "<div>";
-                    var skills = ["Python", "Machine Learning", "Sponsor", "2+ years of experience", "$65,000.00 - $160,000.00 per year"];
+                    var other_skills = "";
+                    var skills = data[i]['qualifications'].split("\n");
                     for (var s in skills) {
-                        htmlString += "<span class=\"badge bg-primary\">" + skills[s] + "</span>&nbsp;";
+                        if (skills[s].length <= 40) {
+                            htmlString += "<span class=\"badge bg-secondary\">" + skills[s] + "</span>&nbsp;";
+                        }
+                        else {
+                            other_skills += "<p>" + skills[s].charAt(0).toUpperCase() + skills[s].slice(1) + "</p>";
+                        }
                     }
                     htmlString += "</div>";
                     htmlString += "</a>";
                     htmlString += "</div>";
                     // details
                     htmlString += "<div id=\"id" + String(i) + "\" class=\"collapse\" data-bs-parent=\"#json_container\">";
-                    htmlString += "<div class=\"card-body\">";
-                    htmlString += "<b>Full Job Description</b>";
-                    description = data[i]['description'].split("\n");
-                    for(var line in description){
-                        htmlString += "<p>" + description[line] + "</p>";
-                    }
+                    htmlString += "<div id=\"description\" class=\"card-body\">";
+                    htmlString += "<ul class=\"nav nav-tabs\"";
+                    htmlString += "<li class=\"nav-item\">";
+                    htmlString += "<a class=\"nav-link active\">Detailed Qualifications</a></li>";
+                    htmlString += "<li class=\"nav-item\">";
+                    htmlString += "<a class=\"nav-link\">Company Information</a>";
+                    htmlString += "</li></ul><br>";
+//                    htmlString += "<b>Other Requirements</b>";
+                    htmlString += other_skills;
+//                    description = data[i]['description'].split("\n");
+//                    for(var line in description){
+//                        htmlString += "<p>" + description[line] + "</p>";
+//                    }
                     htmlString += "</div>";
                     htmlString += "</div>";
                     htmlString += "</div>";
                 }
                 // jsonContainer.insertAdjacentHTML('beforeend', htmlString);
                 jsonContainer.innerHTML = htmlString;
+//                var full_description = document.getElementById("description");
+//                full_description.innerHTML = other_skills;
                 $('#errorAlert').hide();
                 $('#json_container').show();
             }

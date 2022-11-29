@@ -41,12 +41,21 @@
         </div>
         <div class="row m-4">
             <div class="col">
-                <select id="multiselect" multiple="multiple">
+                <select id="multiselect" class="multiselect-container" multiple>
                   <option value="python">Python</option>
                     <option value="java">Java</option>
                     <option value="cpp">C++</option>
                     <option value="javascript">JavaScript</option>
                 </select>
+                <script>
+                    var skills = ['Python', 'Java', 'Javascript', 'R', 'C++', 'Julia', 'SPSS', 'SAS', 'MATLAB', 'C#', 'PHP', 'SQL', 'Excel', 'Google Suite', 'Databricks', 'AWS', 'Azure', 'Tableau', 'GCP', 'PowerPoint', 'Angular', 'AngularJS', 'React', 'Vue', 'Backbone', 'HTML', 'CSS', 'Bootstrap', 'Foundation', 'Intuit', 'TypeScript', 'Kotlin', 'JQuery', 'Node.js', 'Express.js', 'Flask', 'REST', 'SOAP', 'Spark', 'Hadoop', 'NoSQL', 'PyTorch/Torch', 'TensorFlow', 'Deep Learning', 'Neural Network(s)', 'NLP', 'Knowledge graph', 'Linux/Unix', 'Git', 'Perforce'];
+                    skill_string = "";
+                    for (let i = 0; i < skills.length; i++) {
+                        skill_string += "<option value=" + "\"" + skills[i] + "\">" + skills[i] + "</option>";
+                    }
+                    var skill_select = document.getElementById("multiselect")
+                    skill_select.innerHTML = skill_string;
+                </script>
             </div>
             <div class="col">
                 <select class="form-select">
