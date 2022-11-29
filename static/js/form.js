@@ -1,12 +1,72 @@
+function display_company_info(company, id) {
+//    console.log(company);
+//    console.log(id);
+    var other_id = "#other" + id;
+    $(other_id).hide();
+    var company_id = "#company" + id;
+    $.ajax({
+        data : {
+            company: company
+        },
+        type: 'GET',
+        url : '/company'
+    })
+    .done(function(data) {
+        var company_info = JSON.parse(data);
+        var company_string = "";
+        if (company_info['Description']) {
+            company_string += "<p><b>Description: </b>" + company_info['Description'] + "</p>";
+        }
+        if (company_info['Industries']) {
+            company_string += "<p><b>Industries: </b>";
+            for (var industry in company_info['Industries']) {
+                company_string += "<span class=\"badge bg-primary\">" + company_info['Industries'][industry] + "</span>&nbsp;"
+            }
+            company_string += "</p>";
+        }
+        if (company_info['Number of Employees']) {
+            company_string += "<p><b>Number of Employees: </b>" + company_info['Number of Employees'] + "</p>";
+        }
+        if (company_info["Headquarter Location"]) {
+            company_string += "<p><b>Headquarter Location: </b>" + company_info['Headquarter Location'] + "</p>";
+        }
+        if (company_info['Company Website']) {
+            company_string += "<p><b>Company Website: </b><a href=\"https://" + company_info['Company Website'].replace(/\s/g, '') + "\">" + company_info['Company Website'] + "</a></p>";
+        }
+        if (company_info['Founded Date']) {
+            company_string += "<p><b>Founded Date: </b>" + company_info['Founded Date'] + "</p>";
+        }
+        if (company_info['Operating Status']) {
+            company_string += "<p><b>Operating Status: </b>" + company_info['Operating Status'] + "</p>";
+        }
+        if (company_info['Last Funding Type']) {
+            company_string += "<p><b>Last Funding Type: </b>" + company_info['Last Funding Type'] + "</p>";
+        }
+        if (company_info['Related Hubs']) {
+            company_string += "<p><b>Related Hubs: </b>" + company_info['Related Hubs'] + "</p>";
+        }
+        $(company_id).html(company_string);
+//        console.log(typeof data);
+    });
+}
+
+
+
+
 $(document).ready(function() {
-//    $( ".mr-auto .nav-item" ).bind( "click", function(event) {
+//    $( '.nav-tabs' ).on( 'click', function () {
+//	$( '.nav-item' ).find( 'li.active' ).removeClass( 'active' );
+//	$( this ).parent( 'li' ).addClass( 'active' );
+//    });
+//    $( ".nav-item" ).on( "click", function() {
 //        event.preventDefault();
 //        var clickedItem = $( this );
-//        $( ".mr-auto .nav-item" ).each( function() {
+//        $( ".nav-item" ).each( function() {
 //            $( this ).removeClass( "active" );
 //        });
 //        clickedItem.addClass( "active" );
 //    });
+
     $("#multiselect").multiselect({
     enableFiltering: true,
     maxHeight: 450,
@@ -90,14 +150,18 @@ $(document).ready(function() {
                     htmlString += "<div id=\"description\" class=\"card-body\">";
                     htmlString += "<ul class=\"nav nav-tabs\"";
                     htmlString += "<li class=\"nav-item\">";
-                    htmlString += "<a class=\"nav-link active\">Detailed Qualifications</a></li>";
+                    htmlString += "<a class=\"nav-link\">Detailed Qualifications</a></li>";
                     htmlString += "<li class=\"nav-item\">";
-                    htmlString += "<a class=\"nav-link\">Company Information</a></li>";
+                    htmlString += "<a class=\"nav-link\" href=\"javascript:display_company_info(&quot;" + String(data[i]['company']) + "&quot;," + String(i) + ");\">Company Information</a></li>";
                     htmlString += "<li class=\"nav-item\">";
                     htmlString += "<a class=\"nav-link\">Similar Jobs</a></li>";
                     htmlString += "</ul><br>";
 //                    htmlString += "<b>Other Requirements</b>";
+                    htmlString += "<div id=\"other" + String(i) + "\">";
                     htmlString += other_skills;
+                    htmlString += "</div>";
+                    htmlString += "<div id=\"company" + String(i) + "\">"
+                    htmlString += "</div>"
 //                    description = data[i]['description'].split("\n");
 //                    for(var line in description){
 //                        htmlString += "<p>" + description[line] + "</p>";

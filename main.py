@@ -7,6 +7,8 @@ import rdflib
 app = Flask(__name__)
 job_kg = rdflib.Graph()
 job_kg.parse('job_kg.ttl', format="turtle")
+with open('company_info.jsonl', 'r') as input_file:
+    json_list = list(input_file)
 
 
 def get_job_postings(job_title, location, company, skills):
@@ -60,16 +62,13 @@ def process():
     return jsonify({'error': 'Missing data!'})
 
 
-# @app.route('/details')
-# def get_artist_info():
-#     token = get_authentication()
-#     artist_id = request.args.get('id')
-#     artists_endpoint = "https://api.artsy.net/api/artists/"
-#     result = requests.get(artists_endpoint + artist_id, headers={"X-Xapp-Token": token})
-#     result = result.json()
-#     needed_fields = ['name', 'birthday', 'deathday', 'nationality', 'biography']
-#     result = dict([(k, result[k]) for k in result if k in needed_fields])
-#     return jsonify(result).
+@app.route('/company')
+def get_artist_info():
+    company_name = request.args.get('company')
+    for json_str in json_list:
+        company = json.loads(json_str)
+        if company['Company Name'] == company_name:
+            return jsonify(json_str)
 
 
 if __name__ == "__main__":
