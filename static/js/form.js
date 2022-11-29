@@ -1,4 +1,12 @@
 $(document).ready(function() {
+//    $( ".mr-auto .nav-item" ).bind( "click", function(event) {
+//        event.preventDefault();
+//        var clickedItem = $( this );
+//        $( ".mr-auto .nav-item" ).each( function() {
+//            $( this ).removeClass( "active" );
+//        });
+//        clickedItem.addClass( "active" );
+//    });
     $("#multiselect").multiselect({
     enableFiltering: true,
     maxHeight: 450,
@@ -63,11 +71,15 @@ $(document).ready(function() {
                     var other_skills = "";
                     var skills = data[i]['qualifications'].split("\n");
                     for (var s in skills) {
+                        skills[s] = skills[s].charAt(0).toUpperCase() + skills[s].slice(1)
+                    }
+                    skills = [...new Set(skills)];
+                    for (var s in skills) {
                         if (skills[s].length <= 40) {
                             htmlString += "<span class=\"badge bg-secondary\">" + skills[s] + "</span>&nbsp;";
                         }
                         else {
-                            other_skills += "<p>" + skills[s].charAt(0).toUpperCase() + skills[s].slice(1) + "</p>";
+                            other_skills += "<p>" + skills[s] + "</p>";
                         }
                     }
                     htmlString += "</div>";
@@ -80,8 +92,10 @@ $(document).ready(function() {
                     htmlString += "<li class=\"nav-item\">";
                     htmlString += "<a class=\"nav-link active\">Detailed Qualifications</a></li>";
                     htmlString += "<li class=\"nav-item\">";
-                    htmlString += "<a class=\"nav-link\">Company Information</a>";
-                    htmlString += "</li></ul><br>";
+                    htmlString += "<a class=\"nav-link\">Company Information</a></li>";
+                    htmlString += "<li class=\"nav-item\">";
+                    htmlString += "<a class=\"nav-link\">Similar Jobs</a></li>";
+                    htmlString += "</ul><br>";
 //                    htmlString += "<b>Other Requirements</b>";
                     htmlString += other_skills;
 //                    description = data[i]['description'].split("\n");
