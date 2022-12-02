@@ -3,6 +3,8 @@ function display_company_info(company, id) {
 //    console.log(id);
     var other_id = "#other" + id;
     $(other_id).hide();
+    var similar_id = "#similar" + id;
+    $(similar_id).hide();
     var company_id = "#company" + id;
     $.ajax({
         data : {
@@ -46,7 +48,49 @@ function display_company_info(company, id) {
             company_string += "<p><b>Related Hubs: </b>" + company_info['Related Hubs'] + "</p>";
         }
         $(company_id).html(company_string);
+        $(company_id).show();
 //        console.log(typeof data);
+    });
+}
+
+function display_qualifications(id) {
+    var other_id = "#other" + id;
+    $(other_id).show();
+    var similar_id = "#similar" + id;
+    $(similar_id).hide();
+    var company_id = "#company" + id;
+    $(company_id).hide();
+}
+
+function display_similar_jobs(job_uri, id) {
+    var other_id = "#other" + id;
+    $(other_id).hide();
+    var company_id = "#company" + id;
+    $(company_id).hide();
+    var similar_id = "#similar" + id;
+    $.ajax({
+        data : {
+            job_uri: job_uri
+        },
+        type: 'GET',
+        url : '/similar'
+    })
+    .done(function(data) {
+        var similar_string = "";
+        similar_string += "<div class=\"row\">";
+        for (i=0; i < data.length; i++) {
+            similar_string += "<div class=\"col card m-4\">";
+//            similar_string += "<div class=\"card-header\">";
+            similar_string += "<h5 class=\"card-title\">" + data[i]['title'] + "</h5>";
+            similar_string += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['company'] + "</h6>";
+            similar_string += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['location'] + "</h6>";
+            similar_string += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['salary'] + "</h6>";
+            similar_string += "</div>";
+        }
+        similar_string += "</div>";
+        $(similar_id).html(similar_string);
+//        console.log(similar_string);
+        $(similar_id).show();
     });
 }
 
@@ -150,17 +194,20 @@ $(document).ready(function() {
                     htmlString += "<div id=\"description\" class=\"card-body\">";
                     htmlString += "<ul class=\"nav nav-tabs\"";
                     htmlString += "<li class=\"nav-item\">";
-                    htmlString += "<a class=\"nav-link\">Detailed Qualifications</a></li>";
+                    htmlString += "<a class=\"nav-link\" href=\"javascript:display_qualifications(" + String(i) + ");\">Detailed Qualifications</a></li>";
                     htmlString += "<li class=\"nav-item\">";
                     htmlString += "<a class=\"nav-link\" href=\"javascript:display_company_info(&quot;" + String(data[i]['company']) + "&quot;," + String(i) + ");\">Company Information</a></li>";
                     htmlString += "<li class=\"nav-item\">";
-                    htmlString += "<a class=\"nav-link\">Similar Jobs</a></li>";
+                    htmlString += "<a class=\"nav-link\" href=\"javascript:display_similar_jobs(&quot;" + String(data[i]['uri']) + "&quot;," + String(i) + ");\">Similar Jobs</a></li>";
                     htmlString += "</ul><br>";
 //                    htmlString += "<b>Other Requirements</b>";
                     htmlString += "<div id=\"other" + String(i) + "\">";
                     htmlString += other_skills;
                     htmlString += "</div>";
                     htmlString += "<div id=\"company" + String(i) + "\">"
+                    htmlString += "</div>"
+                    htmlString += "</div>";
+                    htmlString += "<div id=\"similar" + String(i) + "\">"
                     htmlString += "</div>"
 //                    description = data[i]['description'].split("\n");
 //                    for(var line in description){

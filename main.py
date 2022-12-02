@@ -33,6 +33,7 @@ def get_job_postings(job_title, location, company, skills):
     results = job_kg.query(q)
     output = []
     for row in results:
+        # print(row.job_uri)
         row_dict = {'uri': row.job_uri, 'title': row.title, 'company': row.company, 'location': row.location, 'description': row.description, 'qualifications': row.qualifications, 'salary': row.salary}
         output.append(row_dict)
     # with open('test_output.jsonl', 'r') as json_file:
@@ -63,12 +64,61 @@ def process():
 
 
 @app.route('/company')
-def get_artist_info():
+def get_company_info():
     company_name = request.args.get('company')
     for json_str in json_list:
         company = json.loads(json_str)
         if company['Company Name'] == company_name:
             return jsonify(json_str)
+
+
+@app.route('/similar')
+def get_similar_jobs():
+    uri = request.args.get('job_uri')
+    uri = uri.replace('file:///C:/Users/jenny/PycharmProjects/dsci558_project/', '')
+    print('URI: ')
+    print(uri)
+    # f"FILTER regex(str(?job_uri), \"{uri}\")"
+    q = ("PREFIX schema: <https://schema.org/>"
+         "SELECT * WHERE {"
+         "?job_uri schema:jobLocation ?location;"
+         "schema:title ?title;"
+         "schema:hiringOrganization ?company;"
+         "schema:employerOverview ?description;"
+         "schema:qualifications ?qualifications;"
+         "schema:baseSalary ?salary."
+         f"FILTER regex(str(?job_uri), \"{uri}\")"
+         "}"
+         "LIMIT 1"
+         )
+    results = job_kg.query(q)
+    output = []
+    for row in results:
+        row_dict = {'uri': row.job_uri, 'title': row.title, 'company': row.company, 'location': row.location,
+                    'description': row.description, 'qualifications': row.qualifications, 'salary': row.salary}
+        output.append(row_dict)
+
+    title = output[0]['title']
+    q = ("PREFIX schema: <https://schema.org/>"
+         "SELECT * WHERE {"
+         "?job_uri schema:jobLocation ?location;"
+         "schema:title ?title;"
+         "schema:hiringOrganization ?company;"
+         "schema:employerOverview ?description;"
+         "schema:qualifications ?qualifications;"
+         "schema:baseSalary ?salary."
+         f"FILTER regex(?title, \"{title}\")"
+         "}"
+         "LIMIT 6"
+         )
+    results = job_kg.query(q)
+    output = []
+    for row in results:
+        row_dict = {'uri': row.job_uri, 'title': row.title, 'company': row.company, 'location': row.location,
+                    'description': row.description, 'qualifications': row.qualifications, 'salary': row.salary}
+        output.append(row_dict)
+    print(output)
+    return jsonify(output[1:])
 
 
 if __name__ == "__main__":
