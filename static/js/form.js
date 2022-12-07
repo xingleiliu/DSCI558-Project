@@ -79,12 +79,14 @@ function display_similar_jobs(job_uri, id) {
         var similar_string = "";
         similar_string += "<div class=\"row\">";
         for (i=0; i < data.length; i++) {
-            similar_string += "<div class=\"col card m-4\">";
+            similar_string += "<div class=\"col card mx-4 mb-4\">";
 //            similar_string += "<div class=\"card-header\">";
+            similar_string += "<a href=\"" + data[i]['uri'] + "\">";
             similar_string += "<h5 class=\"card-title\">" + data[i]['title'] + "</h5>";
             similar_string += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['company'] + "</h6>";
             similar_string += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['location'] + "</h6>";
             similar_string += "<h6 class=\"card-subtitle mb-2 text-muted\">" + data[i]['salary'] + "</h6>";
+            similar_string += "</a>"
             similar_string += "</div>";
         }
         similar_string += "</div>";
@@ -146,9 +148,10 @@ $(document).ready(function() {
             data : {
                 job_title: $('#titleInput').val(),
                 location: $('#locationInput').val(),
-                company: $('#companyInput').val()
+                company: $('#companyInput').val(),
+                skills: String($('#multiselect').val())
             },
-            type: 'GET',
+            type: 'POST',
             url : '/process'
         })
         .done(function(data) {
@@ -203,6 +206,7 @@ $(document).ready(function() {
 //                    htmlString += "<b>Other Requirements</b>";
                     htmlString += "<div id=\"other" + String(i) + "\">";
                     htmlString += other_skills;
+                    htmlString += "<a href=\"" + data[i]['uri'] + "\">Link to Original Posting</a>";
                     htmlString += "</div>";
                     htmlString += "<div id=\"company" + String(i) + "\">"
                     htmlString += "</div>"

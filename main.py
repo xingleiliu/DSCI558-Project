@@ -12,6 +12,9 @@ with open('company_info.jsonl', 'r') as input_file:
 
 
 def get_job_postings(job_title, location, company, skills):
+    skills_query = ""
+    for s in skills:
+        skills_query += f"FILTER regex(?qualifications, \"{s}\")"
     q = ("PREFIX schema: <https://schema.org/>"
          "SELECT * WHERE {"
          "?job_uri schema:jobLocation ?location;"
@@ -23,7 +26,7 @@ def get_job_postings(job_title, location, company, skills):
          f"FILTER regex(?title, \"{job_title}\")"
          f"FILTER regex(?location, \"{location}\")"
          f"FILTER regex(?company, \"{company}\")"
-         f"FILTER regex(?qualifications, \"{skills}\")"
+         f"{skills_query}"
          "}"
          )
 
@@ -41,6 +44,7 @@ def get_job_postings(job_title, location, company, skills):
     # for json_str in json_list:
     #     result = json.loads(json_str)
     #     output.append(result)
+    print(output)
     return jsonify(output)
 
 
@@ -49,15 +53,14 @@ def main():
     return app.send_static_file('index.html')
 
 
-@app.route('/process', methods=['GET'])
+@app.route('/process', methods=['POST'])
 def process():
     # name = request.form['name']
-    job_title = request.args.get('job_title')
-    location = request.args.get('location')
-    company = request.args.get('company')
-    skills = request.args.get('skills')
-    print(skills)
-    skills = "Python"
+    job_title = request.form.get('job_title')
+    location = request.form.get('location')
+    company = request.form.get('company')
+    skills = request.form.get('skills')
+    skills = skills.split(',')
     if job_title:
         return get_job_postings(job_title, location, company, skills)
     return jsonify({'error': 'Missing data!'})
@@ -76,8 +79,8 @@ def get_company_info():
 def get_similar_jobs():
     uri = request.args.get('job_uri')
     uri = uri.replace('file:///C:/Users/jenny/PycharmProjects/dsci558_project/', '')
-    print('URI: ')
-    print(uri)
+    # print('URI: ')
+    # print(uri)
     # f"FILTER regex(str(?job_uri), \"{uri}\")"
     q = ("PREFIX schema: <https://schema.org/>"
          "SELECT * WHERE {"
@@ -108,6 +111,7 @@ def get_similar_jobs():
          "schema:qualifications ?qualifications;"
          "schema:baseSalary ?salary."
          f"FILTER regex(?title, \"{title}\")"
+         f"FILTER regex(str(?job_uri), \"indeed\")"
          "}"
          "LIMIT 6"
          )
@@ -117,11 +121,11 @@ def get_similar_jobs():
         row_dict = {'uri': row.job_uri, 'title': row.title, 'company': row.company, 'location': row.location,
                     'description': row.description, 'qualifications': row.qualifications, 'salary': row.salary}
         output.append(row_dict)
-    print(output)
+    # print(output)
     return jsonify(output[1:])
 
 
 if __name__ == "__main__":
     # fetch_artists()
     # get_artist_info("https://api.artsy.net/api/artists/4d8b928b4eb68a1b2c0001f2")
-    app.run(debug=True)
+    app.run(debug=True, port=3030)
