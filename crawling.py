@@ -79,11 +79,10 @@ for state in ['CA', 'NY', 'WA', 'GA', 'TX']:
             try:
                 next_page = soup.find("a", {"data-testid": "pagination-page-next"})['href']
             except TypeError:
-                break
-                # try:
-                #     next_page = soup.find("div", {"class": "show-omitted-jobs"}).find("a")['href']
-                # except AttributeError or TypeError:
-                #     break
+                try:
+                    next_page = soup.find("div", {"class": "show-omitted-jobs"}).find("a")['href']
+                except AttributeError or TypeError:
+                    break
         print(state + "(" + position_title + "): " + str(num_pages) + " pages")
 
 outfile.close()

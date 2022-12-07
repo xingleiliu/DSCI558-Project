@@ -4,16 +4,16 @@ from bs4 import BeautifulSoup
 from datetime import date
 import concurrent.futures
 import threading
+import re
 
 
 class JobPosting:
-    def __init__(self, job_title, location, company, link, job_description, num_candidate, posting_date):
+    def __init__(self, job_title, location, company, link, job_description, posting_date):
         self.job_title = job_title
         self.location = location
         self.company = company
         self.link = link
         self.job_description = job_description
-        self.num_candidate = num_candidate
         self.posting_date = posting_date
 
 
@@ -38,17 +38,23 @@ def crawl_page(url):
         title = soup.find("h1", {"class": "jobsearch-JobInfoHeader-title"}).text
     except AttributeError:
         return
-    # JobComponent-description
     job_description = soup.find("div", {"class": "jobsearch-jobDescriptionText"}).text
+    # print(job_description)
     company_name = soup.find("div", {"class": "jobsearch-JobInfoHeader-subtitle"}).find("div", class_="").text
     location = soup.find("div", {"class": "jobsearch-JobInfoHeader-subtitle"}).find("div", class_="",
                                                                                     recursive=False).text
-    posting_date = soup.find("p", {"class": "jobsearch-HiringInsights-entry--bullet"}).text
-    try:
-        num_candidate = soup.find("p", {"class": "jobsearch-HiringInsights-entry"}).text
-        job_posting = JobPosting(title, location, company_name, url, job_description, num_candidate, posting_date)
-    except AttributeError:
-        job_posting = JobPosting(title, location, company_name, url, job_description, None, posting_date)
+
+    # posting_date = soup.find("p", {"class": "jobsearch-HiringInsights-entry--bullet"}).text
+    posting_date = soup.find('span', string=re.compile(r"Posted")).text
+
+    # JobComponent-description
+
+    # try:
+    #     num_candidate = soup.find("p", {"class": "jobsearch-HiringInsights-entry"}).text
+    #     job_posting = JobPosting(title, location, company_name, url, job_description, num_candidate, posting_date)
+    # except AttributeError:
+    job_posting = JobPosting(title, location, company_name, url, job_description, posting_date)
+    # print(job_posting)
     line = json.dumps(job_posting.__dict__) + "\n"
     lock.acquire()
     outfile.write(line)
@@ -66,6 +72,8 @@ with open(input_file, 'r') as input_file:
     urls = list(set(urls))
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         executor.map(crawl_page, urls)
+        # for x, return_value in results:
+        #     outfile.write(return_value)
 
 
 outfile.close()
