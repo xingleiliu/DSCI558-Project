@@ -1,11 +1,29 @@
-from selenium.common import NoSuchElementException
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+# import cfscrape
+#
+# scraper = cfscrape.create_scraper()  # returns a CloudflareScraper instance
+# # Or: scraper = cfscrape.CloudflareScraper()  # CloudflareScraper inherits from requests.Session
+# page = scraper.get("http://indeed.com")  # => "<!DOCTYPE html><html><head>..."
+# print(page.status_code)
+# # soup = BeautifulSoup(page.content, "html.parser")
+# # print(soup.prettify())
+
+import cloudscraper
+from bs4 import BeautifulSoup
 import json
+import requests
 from datetime import date
+from datetime import date
+# from scrapeops_python_requests.scrapeops_requests import ScrapeOpsRequests
+#
+# scrapeops_logger = ScrapeOpsRequests(
+#     scrapeops_api_key= '03ffa28b-89a1-4663-8449-954c7e8b04b8',
+#     spider_name='ScrapeOps Test Script',
+#     job_name='TestJob'
+#     )
+#
+#
+# requests = scrapeops_logger.RequestsWrapper()
+
 
 today = date.today().strftime("%m%d")
 
@@ -17,69 +35,55 @@ class JobPosting:
         self.link = link
 
 
-DRIVER_PATH = 'C:/Users/jenny/OneDrive/Desktop/chromedriver'
-driver = webdriver.Chrome(executable_path=DRIVER_PATH)
-driver.get('https://www.indeed.com/jobs?q=&l=CA')
-
+base_url = "https://www.indeed.com"
+# scraper = cloudscraper.create_scraper()  # returns a CloudScraper instance
+# Or: scraper = cloudscraper.CloudScraper()  # CloudScraper inherits from requests.Session
+# with open('next_page.txt', 'r') as next_page_file:
+#     next_page = next_page_file.read()
 filename = 'indeed_postings_' + today + '.jsonl'
 outfile = open(filename, 'w')
-# location = driver.find_element(by=By.ID, value="text-input-where")
-# location.clear()
-# location.send_keys("CA")
-# submit = driver.find_element(by=By.CLASS_NAME, value="yosegi-InlineWhatWhere-primaryButton")
-# submit.click()
-driver.implicitly_wait(3)
-while True:
-    job_cards = driver.find_elements(by=By.CLASS_NAME, value="job_seen_beacon")
-    # print(len(job_cards))
-    for job in job_cards:
-        try:
-            title_line = job.find_element(by=By.CLASS_NAME, value="jcs-JobTitle")
-            title = title_line.find_element(by=By.CSS_SELECTOR, value="span").text
-            link = title_line.get_attribute("href")
-            company_name = job.find_element(by=By.CLASS_NAME, value="companyName").text
-            job_posting = JobPosting(title, company_name, link)
-            line = json.dumps(job_posting.__dict__) + "\n"
-            outfile.write(line)
+for state in ['CA', 'NY', 'WA', 'GA', 'TX']:
+    for position_title in ['software+engineer', 'data+scientist', 'ux+ui+designer']:
+        next_page = "/jobs?q=" + position_title + "&l=" + state + "&sc=0kf%3Aexplvl%28ENTRY_LEVEL%29%3B&fromage=14"
+        num_pages = 0
 
-        except NoSuchElementException:
-            continue
-
-    try:
-        next_page = driver.find_element(by=By.CSS_SELECTOR, value='[data-testid="pagination-page-next"]')
-    except NoSuchElementException:
-        break
-    next_page.click()
+        while True:
+            # page = requests.get(base_url + next_page)
+            # page = scraper.get(base_url + next_page)
+            page = requests.get(
+                url='https://proxy.scrapeops.io/v1/',
+                params={
+                    'api_key': '03ffa28b-89a1-4663-8449-954c7e8b04b8',
+                    'url': base_url + next_page,
+                },
+            )
+            num_pages += 1
+            if page.status_code != 200:
+                print("HTTP Error Code: " + str(page.status_code))
+                print("Crawled {num_pages} pages".format(num_pages=num_pages))
+                with open('next_page.txt', 'w') as f:
+                    f.write(next_page)
+            soup = BeautifulSoup(page.content, "html.parser")
+            # print(soup.prettify())
+            cards = soup.find_all("div", {"class": "job_seen_beacon"})
+            for card in cards:
+                try:
+                    link = card.find("a", {"class": "jcs-JobTitle"})['href']
+                    title = card.find("a", {"class": "jcs-JobTitle"}).text
+                    company_name = card.find("span", {"class": "companyName"}).text
+                    job_posting = JobPosting(title, company_name, link)
+                    line = json.dumps(job_posting.__dict__) + "\n"
+                    outfile.write(line)
+                except AttributeError or TypeError:
+                    continue
+            try:
+                next_page = soup.find("a", {"data-testid": "pagination-page-next"})['href']
+            except TypeError:
+                try:
+                    next_page = soup.find("div", {"class": "show-omitted-jobs"}).find("a")['href']
+                except AttributeError or TypeError:
+                    break
+        print(state + "(" + position_title + "): " + str(num_pages) + " pages")
 
 outfile.close()
-
-
-
-# import requests
-#
-# url = 'https://www.indeed.com/'
-# headers = {
-#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-# }
-
-# HEADERS = {
-#     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
-#     "Accept-Encoding": "gzip, deflate, br",
-#     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-#     "Connection": "keep-alive",
-#     "Accept-Language": "en-US,en;q=0.9,lt;q=0.8,et;q=0.7,de;q=0.6",
-# }
-
-# response = requests.get(url=url)
-# print(response.text)
-
-
-# from scrapfly import ScrapflyClient, ScrapeConfig
-#
-# client = ScrapflyClient(key='scp-live-3c569f58666e41dda01e9a03660b2f3d')
-# result = client.scrape(ScrapeConfig(
-#     url="https://www.indeed.com/jobs?q=python&l=Texas",
-#     asp=True,
-#     # ^ enable Anti Scraping Protection
-# ))
-# print(result.content)
+print("Crawled {num_pages} pages".format(num_pages=num_pages))

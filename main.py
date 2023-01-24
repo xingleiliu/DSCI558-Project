@@ -7,7 +7,7 @@ import rdflib
 app = Flask(__name__)
 job_kg = rdflib.Graph()
 job_kg.parse('job_kg.ttl', format="turtle")
-with open('company_info.jsonl', 'r') as input_file:
+with open('data/company_info.jsonl', 'r') as input_file:
     json_list = list(input_file)
 
 
